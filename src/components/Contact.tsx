@@ -50,7 +50,7 @@ export function Contact() {
         style={{ rotate }}
         className="pointer-events-none absolute right-[-30vw] top-10 aspect-square w-[110vw] text-white/20 md:right-[-8vw] md:top-0 md:w-[56vw]"
       >
-        <SigilArt seed={9} variant="line" draw options={{ spread: 430 }} className="h-full w-full" />
+        <SigilArt seed={9} variant="line" draw className="h-full w-full" />
       </motion.div>
 
       <div className="relative">

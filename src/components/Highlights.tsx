@@ -36,7 +36,7 @@ export function Highlights() {
                 <span className="relative grid h-full w-full place-items-center overflow-hidden rounded-full bg-paper transition-colors duration-500 group-hover:bg-ink group-hover:text-bone">
                   <SigilArt
                     seed={item.seed}
-                    options={{ tiers: 4 }}
+                    line={9}
                     className="h-[78%] w-[78%] transition-transform duration-700 ease-out group-hover:rotate-180 group-hover:scale-110"
                   />
                 </span>

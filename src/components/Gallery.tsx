@@ -57,7 +57,7 @@ export function Media({
       <div
         className={`grid place-items-center bg-paper text-ink ${fit === "cover" ? "h-full w-full" : "aspect-[4/5] h-full max-w-full"}`}
       >
-        <SigilArt seed={slide.seed} className="h-[84%] w-[84%]" />
+        <SigilArt seed={slide.seed} line={5} className="h-[88%] w-[88%]" />
       </div>
     </div>
   );

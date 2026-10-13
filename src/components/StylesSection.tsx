@@ -19,7 +19,7 @@ function Panel({ style }: { style: Style }) {
           seed={style.seed}
           variant={style.variant}
           draw
-          options={style.slug === "blackwork" ? { weight: 0.2 } : style.slug === "manga" ? { weight: 0.3 } : undefined}
+          options={style.slug === "manga" ? { weight: 1.5 } : undefined}
           className="h-full w-full"
         />
       </div>

@@ -18,7 +18,7 @@ export type Style = {
   name: string;
   text: string;
   seed: number;
-  variant: "fill" | "line" | "tone";
+  variant: "hollow" | "line" | "fill" | "tone";
   note?: string;
 };
 
@@ -49,7 +49,7 @@ export const styles: Style[] = [
     name: "Sigilism",
     text: "Formas afiadas e simétricas que seguem a anatomia, entre o tribal e o futurista.",
     seed: 9,
-    variant: "fill",
+    variant: "hollow",
   },
   {
     slug: "army",

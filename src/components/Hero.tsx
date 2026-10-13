@@ -1,15 +1,35 @@
 "use client";
 
 import { motion, useMotionTemplate, useScroll, useTransform } from "motion/react";
-import { useMemo, useRef } from "react";
-import { makeSigil, starPath } from "@/lib/sigil";
+import { useId, useMemo, useRef } from "react";
+import { makeSigil } from "@/lib/sigil";
 import { site } from "@/lib/site";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
-const BOX = "absolute left-1/2 top-1/2 aspect-square w-[min(128vw,90svh)] -translate-x-1/2 -translate-y-1/2";
+const BOX = "absolute left-1/2 top-1/2 aspect-square w-[min(150vw,118svh)] -translate-x-1/2 -translate-y-1/2";
+const VIEW = { x: -50, y: -50, width: 1100, height: 1100 };
+const VIEW_BOX = `${VIEW.x} ${VIEW.y} ${VIEW.width} ${VIEW.height}`;
+const HERO_SEED = 6;
+// o traço é desenhado com o dobro da espessura; a máscara apaga a metade de dentro
+const STROKE = 7;
+
+// Esconde o interior dos ossos: sobra só o contorno externo da união das formas.
+function BoneMask({ id, bones }: { id: string; bones: string[] }) {
+  return (
+    <mask id={id} maskUnits="userSpaceOnUse" {...VIEW}>
+      <rect {...VIEW} fill="#fff" />
+      <g fill="#000">
+        {bones.map((d, i) => (
+          <path key={i} d={d} />
+        ))}
+      </g>
+    </mask>
+  );
+}
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
+  const id = useId();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
 
   // ao rolar: as letras se afastam e o sigilo cresce entre elas
@@ -20,7 +40,7 @@ export function Hero() {
   const rotate = useTransform(scrollYProgress, [0, 0.6], [0, 8]);
   const fade = useTransform(scrollYProgress, [0, 0.18], [1, 0]);
 
-  const sigil = useMemo(() => makeSigil(7, { spread: 430 }), []);
+  const sigil = useMemo(() => makeSigil(HERO_SEED, { talons: 4, lower: false }), []);
 
   const letter = (delay: number) => ({
     initial: { y: "105%" },
@@ -46,38 +66,42 @@ export function Hero() {
 
         {/* tinta: branca em modo "difference" — preta no papel, branca sobre as letras */}
         <motion.div style={{ scale, rotate }} className={`${BOX} mix-blend-difference`} aria-hidden="true">
-          <svg viewBox="-50 -50 1100 1100" className="h-full w-full">
-            <g fill="#fff">
-              {sigil.blades.map((d, i) => (
-                <motion.path
-                  key={i}
-                  d={d}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 1.5 + i * 0.03 }}
-                />
-              ))}
+          <svg viewBox={VIEW_BOX} className="h-full w-full">
+            <defs>
+              <BoneMask id={`${id}-ink`} bones={sigil.bones} />
+            </defs>
+            <g mask={`url(#${id}-ink)`}>
+              <g fill="none" stroke="#fff" strokeWidth={STROKE} strokeLinejoin="round">
+                {sigil.bones.map((d, i) => (
+                  <motion.path
+                    key={i}
+                    d={d}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 1.5 + i * 0.04 }}
+                  />
+                ))}
+              </g>
+              <g fill="#fff">
+                {sigil.accents.map((d, i) => (
+                  <motion.path
+                    key={i}
+                    d={d}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 2.2 + i * 0.04 }}
+                  />
+                ))}
+              </g>
             </g>
-            <g fill="none" stroke="#fff" strokeWidth={1.6} strokeLinecap="round">
+            <g fill="none" stroke="#fff" strokeWidth={2} strokeLinecap="round">
               {sigil.hairlines.map((d, i) => (
                 <motion.path
                   key={i}
                   d={d}
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
-                  transition={{ duration: 0.9, delay: 2.5, ease: "easeOut" }}
-                />
-              ))}
-            </g>
-            <g fill="#fff">
-              {sigil.stars.map((star, i) => (
-                <motion.path
-                  key={i}
-                  d={starPath(star)}
-                  initial={{ scale: 0, rotate: -45 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ duration: 0.7, delay: 2.9 + i * 0.08, ease: EASE }}
-                  style={{ transformBox: "fill-box", transformOrigin: "center" }}
+                  transition={{ duration: 0.9, delay: 2.6, ease: "easeOut" }}
                 />
               ))}
             </g>
@@ -87,24 +111,26 @@ export function Hero() {
         {/* decalque: o contorno roxo é desenhado antes da tinta e some depois */}
         <motion.div style={{ scale, rotate }} className={`${BOX} text-stencil`} aria-hidden="true">
           <motion.svg
-            viewBox="-50 -50 1100 1100"
+            viewBox={VIEW_BOX}
             className="h-full w-full"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
             initial={{ opacity: 1 }}
             animate={{ opacity: 0 }}
             transition={{ duration: 0.9, delay: 2.7 }}
           >
-            {sigil.blades.map((d, i) => (
-              <motion.path
-                key={i}
-                d={d}
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: 1.3, delay: 0.3 + i * 0.03, ease: "easeInOut" }}
-              />
-            ))}
+            <defs>
+              <BoneMask id={`${id}-stencil`} bones={sigil.bones} />
+            </defs>
+            <g mask={`url(#${id}-stencil)`} fill="none" stroke="currentColor" strokeWidth={STROKE} strokeLinejoin="round">
+              {sigil.bones.map((d, i) => (
+                <motion.path
+                  key={i}
+                  d={d}
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 1.3, delay: 0.3 + i * 0.04, ease: "easeInOut" }}
+                />
+              ))}
+            </g>
           </motion.svg>
         </motion.div>
 
