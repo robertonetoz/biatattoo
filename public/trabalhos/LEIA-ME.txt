@@ -1,0 +1,25 @@
+COMO ADICIONAR TRABALHOS À GALERIA
+
+1. Crie uma pasta aqui dentro para cada trabalho. Exemplo:
+
+   public/trabalhos/01-costas-sigilism/
+   public/trabalhos/02-braco-manga/
+
+2. Coloque as fotos (jpg, png, webp) ou vídeos (mp4, webm) dentro da pasta.
+   Uma foto = trabalho simples. Várias fotos = carrossel, na ordem dos nomes
+   (1.jpg, 2.jpg, 3.jpg...). A primeira é a capa.
+
+3. Opcional: crie um arquivo info.json na pasta para definir título, estilo
+   e o link do post:
+
+   {
+     "titulo": "Costas em sigilo",
+     "estilo": "sigilism",
+     "instagram": "https://www.instagram.com/p/XXXXXXXX/"
+   }
+
+   Estilos aceitos: blackwork, linhas-finas, manga, sigilism, army.
+   Sem info.json, o título vem do nome da pasta e o estilo é detectado se o
+   nome da pasta contiver o estilo (ex.: "03-manga-antebraco").
+
+Enquanto não houver nenhuma pasta com fotos, o site mostra peças de exemplo.
